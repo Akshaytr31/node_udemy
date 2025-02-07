@@ -29,8 +29,10 @@ exports.checkBody = (req, res, next) => {
 };
 
 exports.getAllTours = async (req, res) => {
-  // console.log(req.requestTime);
+  console.log(req.requestTime);
   try{
+    console.log(req.query)
+
     const tours=await Tour.find()
 
 
