@@ -12,6 +12,13 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+
+// let Tour = require('./models/tourModel')
+// app.get('/hhh', async(req,res)=>{
+// let data = await Tour.findOne('67a1d8625cdf521448d81862')
+// res.end(data)
+// })
+
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
 
