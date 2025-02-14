@@ -1,37 +1,14 @@
-
-
-
-
-// const port = process.env.PORT || 3000;
-// app.listen(port, () => {
-//   console.log(`App running on port ${port}...`);
-// });
-
-
-
-
-// const express = require('express');
-// const dotenv = require('dotenv');
-
-// dotenv.config({ path: './config.env' });
-
-// const app = express();
-
-// const port = process.env.PORT || 3000;
-// app.listen(port, () => {
-//   console.log(`App running on port ${port}...`);
-// }).on('error', (err) => {
-//   console.error('Server error:', err.message);
-// });
-
-
-
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
-dotenv.config({ path: './config.env' });
+process.on('uncaughtException', err => {
+  console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
+  console.log(err.name, err.message);
+  process.exit(1);
+});
 
-const app = require('./app'); // Ensure app.js is correctly imported
+dotenv.config({ path: './config.env' });
+const app = require('./app');
 
 const DB = process.env.DATABASE.replace(
   '<PASSWORD>',
@@ -41,18 +18,24 @@ const DB = process.env.DATABASE.replace(
 mongoose
   .connect(DB, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useCreateIndex: true,
+    useFindAndModify: false
   })
-  .then(() => console.log('✅ MongoDB connected successfully'))
-  .catch((err) => {
-    console.error('❌ MongoDB connection error:', err.message);
-    process.exit(1);
-  });
+  .then(() => console.log('DB connection successful!'));
 
 const port = process.env.PORT || 3000;
 const server = app.listen(port, () => {
-  console.log(`🚀 App running on port ${port}...`);
+  console.log(`App running on port ${port}...`);
 });
 
-// Handle errors
-server.on('error', (err) => console.error('❌ Server error:', err.message));
+process.on('unhandledRejection', err => {
+  console.log('UNHANDLED REJECTION! 💥 Shutting down...');
+  console.log(err.name, err.message);
+  server.close(() => {
+    process.exit(1);
+  });
+});
+
+
+
+

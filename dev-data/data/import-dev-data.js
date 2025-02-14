@@ -22,7 +22,7 @@ mongoose
 
 const tours=JSON.parse(fs.readFileSync(`${__dirname}/tours-simple.json`,'utf-8'))
 
-const imporData=async()=>{
+const importData=async()=>{
     try{
         await Tour.create(tours)
         console.log('data successfully loaded!')
