@@ -15,7 +15,14 @@ const reviewRouter=require('./routes/reviewRoutes')
 
 const app = express();
 
+
+// app.set('view engine','pug')
+// app.set('view',path.join(__dirname,'views'))
+
 // 1) MIDDLEWARES
+// Serving static files
+app.use(express.static(`${__dirname}/public`));
+// app.use(express.static(path.join(__dirname,'public')))
 
 // Security HTTP headers
 app.use(helmet());
@@ -57,8 +64,7 @@ app.use(hpp({
   ]
 }));
 
-// Serving static files
-app.use(express.static(`${__dirname}/public`));
+
 
 // Middleware to log request headers (for debugging)
 app.use((req, res, next) => {
