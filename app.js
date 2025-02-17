@@ -12,17 +12,21 @@ const globalErrorHandler = require('./controllers/errorController');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter=require('./routes/reviewRoutes')
+const path = require('path');
+const viewRouter=require('./routes/viewRoutes')
+
+
 
 const app = express();
 
 
-// app.set('view engine','pug')
-// app.set('view',path.join(__dirname,'views'))
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
 
 // 1) MIDDLEWARES
 // Serving static files
-app.use(express.static(`${__dirname}/public`));
-// app.use(express.static(path.join(__dirname,'public')))
+app.use(express.static(path.join(__dirname, 'public')));
+
 
 // Security HTTP headers
 app.use(helmet());
@@ -65,6 +69,25 @@ app.use(hpp({
 }));
 
 
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "https://cdnjs.cloudflare.com"],
+        styleSrc: [
+          "'self'", 
+          "https://cdnjs.cloudflare.com", 
+          "https://fonts.googleapis.com",
+          "'unsafe-inline'"  // Required for inline styles in Google Fonts
+        ],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        imgSrc: ["'self'", "data:"],
+        connectSrc: ["'self'", "https://cdnjs.cloudflare.com"],
+      },
+    },
+  })
+);
 
 // Middleware to log request headers (for debugging)
 app.use((req, res, next) => {
@@ -75,9 +98,17 @@ app.use((req, res, next) => {
 });
 
 // 3) ROUTES
+
+
+
+app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter)
+
+// app.get('/login', (req, res) => {
+//   res.render('login');
+// });
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
@@ -87,3 +118,4 @@ app.all('*', (req, res, next) => {
 app.use(globalErrorHandler);
 
 module.exports = app;
+

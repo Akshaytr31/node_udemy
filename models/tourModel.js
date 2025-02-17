@@ -130,18 +130,18 @@ tourSchema.virtual('durationWeeks').get(function() {
 });
 
 
-tourSchema.virtual('review',{
-  ref:'Riview',
-  foreignField:'tour',
-  localField:'_id'
-})
-
-// DOCUMENT MIDDLEWARE: runs before .save() and .create()
-tourSchema.pre('save', function(next) {
-  this.slug = slugify(this.name, { lower: true });
-  next();
+tourSchema.virtual('reviews', {
+  ref: 'Review',  // ✅ Correct model name
+  foreignField: 'tour',
+  localField: '_id'
 });
 
+tourSchema.index({ slug: 1, unique: true });
+
+tourSchema.pre('save', function(next) {
+  this.slug = slugify(this.name, { lower: true }); // Ensures lowercase slugs
+  next();
+});
 
 tourSchema.pre('save', async function (next) {
   if (!this.guides || !Array.isArray(this.guides) || this.guides.length === 0) {
